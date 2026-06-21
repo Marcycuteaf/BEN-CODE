@@ -138,6 +138,12 @@ http://localhost:8088
 
 <div align="center">
 
+**訪問人次**
+
+<img src="https://count.getloli.org/get/@Marcycuteaf.BEN-CODE?theme=moe" alt="訪問人次" />
+
+<br/><br/>
+
 Made with ❤️ for After Effects · [回報問題](https://github.com/Marcycuteaf/BEN-CODE/issues)
 
 </div>
