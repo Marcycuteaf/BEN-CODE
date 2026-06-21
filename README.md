@@ -1,135 +1,72 @@
-<div align="center">
+# BEN CODE
 
-<img src="https://raw.githubusercontent.com/Marcycuteaf/Marcycuteaf/main/assets/banner-snow.gif" width="100%" alt="Landscape banner with snow" />
+After Effects CEP 擴充功能 — 在 AE 內產生**向量** QR Code 與條碼（Shape Layer，可無損縮放）。
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4a0000,50:dc143c,100:ff4757&height=120&section=header&text=BEN%20CODE&fontSize=48&fontColor=ffffff&animation=twinkling" width="100%" />
+**[下載最新版 ZXP](https://github.com/Marcycuteaf/BEN-CODE/releases/latest/download/BEN-CODE.zxp)** · After Effects 2019–2025+ · macOS / Windows
 
-### Vector QR Code & Barcode Generator for After Effects
-
-[![Release](https://img.shields.io/github/v/release/Marcycuteaf/BEN-CODE?style=for-the-badge&logo=github&color=dc143c&labelColor=4a0000)](https://github.com/Marcycuteaf/BEN-CODE/releases/latest)
-[![Download ZXP](https://img.shields.io/badge/Download-ZXP-ff4757?style=for-the-badge&labelColor=8b0000)](https://github.com/Marcycuteaf/BEN-CODE/releases/latest/download/BEN-CODE.zxp)
-[![After Effects](https://img.shields.io/badge/After_Effects-2024%2B-ff4757?style=for-the-badge&logo=adobe&logoColor=white&labelColor=8b0000)](https://www.adobe.com/products/aftereffects.html)
-[![CEP](https://img.shields.io/badge/CEP-Panel-dc143c?style=for-the-badge&labelColor=4a0000)](https://github.com/Adobe-CEP/CEP-Resources)
-
-<br/>
-
-Generate **true vector** QR codes and barcodes directly inside After Effects — native Shape Layers, infinitely scalable, zero quality loss.
-
-<br/>
-
-<img src="docs/preview.png" alt="BEN CODE panel preview" width="320" />
-
-<br/>
-
-[**Download Latest ZXP**](https://github.com/Marcycuteaf/BEN-CODE/releases/latest/download/BEN-CODE.zxp) · [**Release Notes**](https://github.com/Marcycuteaf/BEN-CODE/releases/latest)
-
-</div>
+<p align="center">
+  <img src="docs/preview.png" alt="BEN CODE 面板" width="320">
+</p>
 
 ---
 
-## Features
+## 功能
 
-| Category | Capabilities |
-|----------|-------------|
-| **QR Code** | Text / URL, error correction, module size, margin, **corner radius**, foreground & background colors |
-| **QR Advanced** | Custom finder-eye styling (color + radius + Merge Paths cutout), central logo reserve area |
-| **Barcodes** | Code 128 · Code 39 · **EAN-13** · **UPC-A** (auto check digit) |
-| **Transform** | Proportional scale %, target-width dynamic sizing |
-| **Output** | Native **Shape Layer** vectors — scale, recolor, and add effects freely in AE |
+- **QR Code** — 文字/網址、容錯等級、模組大小、邊距、圓角、前景/背景色
+- **QR 進階** — 定位點獨立樣式（顏色、圓角、Merge Paths 鏤空）、中央 Logo 預留區
+- **條碼** — Code 128、Code 39、EAN-13、UPC-A（自動校驗碼）
+- **Transform** — 等比縮放 %、目標寬度動態尺寸
+- **輸出** — 原生 Shape Layer 向量圖形
 
 ---
 
-## Quick Install
+## 安裝
 
-> Use the `.zxp` from Releases — **no** PlayerDebugMode required.
-
-1. Download [`BEN-CODE.zxp`](https://github.com/Marcycuteaf/BEN-CODE/releases/latest/download/BEN-CODE.zxp)
-2. Install with [ZXP/UXP Installer](https://aescripts.com/learn/zxp-installer/) or Anastasiy's ZXP Installer
-3. Restart After Effects → **Window ▸ Extensions ▸ BEN CODE — QR & Barcode**
+1. 下載 [`BEN-CODE.zxp`](https://github.com/Marcycuteaf/BEN-CODE/releases/latest/download/BEN-CODE.zxp)
+2. 用 [ZXP/UXP Installer](https://aescripts.com/learn/zxp-installer/) 安裝
+3. 重啟 After Effects
+4. 開啟 **Window → Extensions → BEN CODE — QR & Barcode**
 
 <details>
-<summary><b>Developer install (macOS)</b></summary>
+<summary>開發者安裝（macOS）</summary>
 
 ```bash
 git clone https://github.com/Marcycuteaf/BEN-CODE.git
 cd BEN-CODE
 chmod +x install-mac.sh && ./install-mac.sh
-# Restart After Effects
 ```
+
+重啟 After Effects 後即可使用。需開啟 PlayerDebugMode。
 
 </details>
 
 ---
 
-## How It Works
+## 使用方式
 
-A CEP extension split into two parts, connected via `evalScript`:
+1. 在 AE 開啟或建立一個合成
+2. 在面板輸入內容、調整 QR / 條碼參數（即時預覽）
+3. 設定 Transform（縮放 % 或目標寬度）
+4. 按 **「在 After Effects 中產生」**
 
-```
-client/  ← Panel (HTML/CSS/JS): UI, live preview, geometry
-   │  Writes rectangle list + styles to a JSON temp file
-   ▼
-host/host.jsx  ← ExtendScript: reads file, builds vector Shape Layer
-```
-
-- **QR**: `qrcode-generator` module matrix → each dark cell becomes a rounded `Rect` shape
-- **Barcode**: custom Code 128 / Code 39 / EAN-13 / UPC-A encoder → consecutive bars merged into rectangles
-- All shapes centered at origin → anchor at center → scaling stays proportional
+產生結果為向量 Shape Layer，可在 AE 內任意縮放、改色、加效果。
 
 ---
 
-## Project Structure
+## 專案結構
 
 ```
 BEN-CODE/
-├── CSXS/manifest.xml       # Extension manifest
-├── client/                 # Panel UI (HTML/CSS/JS)
-│   ├── index.html
-│   ├── css/style.css
-│   └── js/
-│       ├── main.js         # Preview + generate
-│       ├── geometry.js     # QR / barcode geometry
-│       └── lib/            # CSInterface, qrcode, barcode
-├── host/host.jsx           # ExtendScript layer builder
-├── docs/preview.png        # Panel screenshot
-├── install-mac.sh          # macOS dev install
-└── package-mac.sh          # Build .zxp
+├── CSXS/manifest.xml    # 擴充功能定義
+├── client/              # 面板 UI（HTML / CSS / JS）
+├── host/host.jsx        # ExtendScript：建立向量圖層
+├── install-mac.sh       # macOS 開發安裝
+└── package-mac.sh       # 打包 .zxp
 ```
 
 ---
 
-## Usage
-
-1. Open a composition in AE (or let the panel create 1920×1080 automatically)
-2. Adjust settings in the panel with live preview
-   - **QR Code**: content, error correction, module size, corner radius, finder eyes, logo slot
-   - **Barcode**: data, symbology, bar width, height, colors
-3. Set **Transform** (scale % or target width in px)
-4. Click **Generate in After Effects**
-
----
-
-## Developer Debug
-
-`.debug` enables Chrome remote debugging. With the panel open in AE:
-
-```
-http://localhost:8088
-```
-
----
-
-## Notes
-
-- Foreground shape limit: **6000** rectangles (performance)
-- Code 128: even-length all-digit input uses Code C; otherwise Code B (ASCII 32–126)
-- Code 39: supports `0-9 A-Z - . space $ / + %`
-- EAN-13 / UPC-A: accepts N−1 digits and auto-fills check digit
-- Third-party: `qrcode.js`, `CSInterface.js` — MIT license
-
----
-
-## Build Release
+## 打包
 
 ```bash
 ./package-mac.sh    # → dist/BEN-CODE.zxp
@@ -137,16 +74,8 @@ http://localhost:8088
 
 ---
 
-<div align="center">
+## 授權
 
-**Page Views**
+第三方：`qrcode.js`、`CSInterface.js` — MIT
 
-<img src="https://mayu.due.moe/get/@Marcycuteaf.BEN-CODE?theme=asoul" alt="Page views" />
-
-<br/><br/>
-
-Made with ❤️ for After Effects · [Report an issue](https://github.com/Marcycuteaf/BEN-CODE/issues)
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4a0000,50:dc143c,100:ff4757&height=80&section=footer" width="100%" />
-
-</div>
+<sub>Bundle ID `com.bencode.qrbarcode`</sub>
