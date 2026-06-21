@@ -140,7 +140,7 @@ http://localhost:8088
 
 **訪問人次**
 
-<img src="https://count.getloli.org/get/@Marcycuteaf.BEN-CODE?theme=moe" alt="訪問人次" />
+<img src="https://mayu.due.moe/get/@Marcycuteaf.BEN-CODE?theme=asoul" alt="訪問人次" />
 
 <br/><br/>
 
