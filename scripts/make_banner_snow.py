@@ -18,8 +18,8 @@ SEED = 42
 # Capsule-render red palette (bottom blend target)
 RED_BOTTOM = (74, 0, 0)      # #4a0000
 RED_MID = (139, 0, 0)        # #8b0000
-BRIGHTNESS = 0.58            # darken base image
-GRADIENT_START = 0.52        # fraction from top where fade begins
+BRIGHTNESS = 0.50            # darken base image
+GRADIENT_START = 0.38        # fraction from top where fade begins
 
 
 def load_landscape(path: Path, width: int) -> Image.Image:
@@ -47,7 +47,7 @@ def apply_bottom_gradient(im: Image.Image) -> Image.Image:
         r = int(RED_MID[0] * t + RED_BOTTOM[0] * t * 0.5)
         g = int(RED_MID[1] * t)
         b = int(RED_MID[2] * t)
-        a = int(255 * min(1.0, t * 1.15))
+        a = int(255 * min(1.0, t * 1.35))
         draw.line([(0, y), (w, y)], fill=(r, g, b, a))
     return Image.alpha_composite(base, grad)
 
@@ -98,7 +98,7 @@ def main():
     base.convert("RGB").save(static_path, quality=92, optimize=True)
 
     frames = [draw_frame(base, flakes, i) for i in range(FRAMES)]
-    gif_path = OUT_DIR / "banner-snow.gif"
+    gif_path = OUT_DIR / "banner-snow-v2.gif"
     frames[0].save(
         gif_path,
         save_all=True,
