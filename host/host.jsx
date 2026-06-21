@@ -41,21 +41,56 @@ function benEnsureComp() {
     return comp;
 }
 
+function benAddRect(vgroup, rc) {
+    var rect = vgroup.addProperty('ADBE Vector Shape - Rect');
+    rect.property('ADBE Vector Rect Size').setValue([rc.w, rc.h]);
+    rect.property('ADBE Vector Rect Position').setValue([rc.x, rc.y]);
+    rect.property('ADBE Vector Rect Roundness').setValue(rc.r || 0);
+    return rect;
+}
+
 function benAddRectGroup(contents, name, rects, color) {
     var grp = contents.addProperty('ADBE Vector Group');
     grp.name = name;
     var vgroup = grp.property('ADBE Vectors Group');
     for (var i = 0; i < rects.length; i++) {
-        var rc = rects[i];
-        var rect = vgroup.addProperty('ADBE Vector Shape - Rect');
-        rect.property('ADBE Vector Rect Size').setValue([rc.w, rc.h]);
-        rect.property('ADBE Vector Rect Position').setValue([rc.x, rc.y]);
-        rect.property('ADBE Vector Rect Roundness').setValue(rc.r || 0);
+        benAddRect(vgroup, rects[i]);
     }
     // Fill 置於群組底部，填滿其上方所有矩形 → 整組單一顏色。
     var fill = vgroup.addProperty('ADBE Vector Graphic - Fill');
     fill.property('ADBE Vector Fill Color').setValue(color);
     return grp;
+}
+
+// 定位點外環：外矩形「減去」內矩形 (Merge Paths Subtract) → 真正鏤空的環
+function benAddRingGroup(contents, name, rings, color) {
+    for (var k = 0; k < rings.length; k++) {
+        var grp = contents.addProperty('ADBE Vector Group');
+        grp.name = name + ' ' + (k + 1);
+        var vgroup = grp.property('ADBE Vectors Group');
+        benAddRect(vgroup, rings[k].outer); // 上方 = 被減者
+        benAddRect(vgroup, rings[k].inner); // 下方 = 減去
+        var merge = vgroup.addProperty('ADBE Vector Filter - Merge');
+        merge.property('ADBE Vector Merge Type').setValue(3); // 3 = Subtract
+        var fill = vgroup.addProperty('ADBE Vector Graphic - Fill');
+        fill.property('ADBE Vector Fill Color').setValue(color);
+    }
+}
+
+function benImportLogo(comp, path, areaWidthPx, finalScale) {
+    var f = new File(path);
+    if (!f.exists) return null;
+    var io = new ImportOptions(f);
+    var item = app.project.importFile(io);
+    var lyr = comp.layers.add(item); // 加在最上層 → 蓋在 QR 上
+    lyr.name = 'Logo';
+    var srcW = item.width || 1;
+    var targetW = areaWidthPx * (finalScale / 100);
+    var sc = (targetW / srcW) * 100;
+    var tg = lyr.property('ADBE Transform Group');
+    tg.property('ADBE Scale').setValue([sc, sc]);
+    tg.property('ADBE Position').setValue([comp.width / 2, comp.height / 2]);
+    return lyr;
 }
 
 function benCreateGraphicFromFile(path) {
@@ -73,9 +108,16 @@ function benCreateGraphicFromFile(path) {
 
         var fg = benHexToRgb(data.fg);
         var bg = benHexToRgb(data.bg);
+        var eye = data.eyeColor ? benHexToRgb(data.eyeColor) : fg;
 
-        // 先加前景 (列表頂端 = 畫面最前)，再加背景 (列表底端 = 最後)。
+        // 列表頂端 = 畫面最前；依序：前景資料 → 定位點 → 背景。
         benAddRectGroup(contents, 'Foreground', data.rects, fg);
+        if (data.rings && data.rings.length) {
+            benAddRingGroup(contents, 'Finder Ring', data.rings, eye);
+        }
+        if (data.dots && data.dots.length) {
+            benAddRectGroup(contents, 'Finder Dot', data.dots, eye);
+        }
         if (data.drawBg && data.bgRect) {
             benAddRectGroup(contents, 'Background', [data.bgRect], bg);
         }
@@ -91,6 +133,11 @@ function benCreateGraphicFromFile(path) {
             scale = (data.targetWidth / W) * 100;
         }
         tg.property('ADBE Scale').setValue([scale, scale]);
+
+        // 匯入 logo (置於中央預留區)
+        if (data.logo && data.logo.path && data.reserve) {
+            try { benImportLogo(comp, data.logo.path, data.reserve.w, scale); } catch (le) {}
+        }
 
         app.endUndoGroup();
         return 'OK:' + layer.name;

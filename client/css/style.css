@@ -53,6 +53,7 @@ html, body {
 
 /* Preview */
 .preview-wrap {
+    flex: 0 0 auto;          /* 不被 flex 直欄壓縮 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -60,9 +61,17 @@ html, body {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 10px;
-    min-height: 150px;
+    height: 250px;           /* 固定預覽區高度 */
+    overflow: hidden;        /* 任何情況下都不溢出 */
 }
-#preview { max-width: 100%; height: auto; image-rendering: pixelated; }
+#preview {
+    display: block;
+    max-width: 100%;
+    max-height: 230px;       /* 等比縮放、永遠落在容器內 */
+    width: auto;
+    height: auto;
+    image-rendering: pixelated;
+}
 
 /* Panels */
 .panel {
@@ -140,3 +149,23 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .primary:hover { filter: brightness(1.08); }
 .primary:active { transform: translateY(1px); }
 .primary:disabled { opacity: 0.5; cursor: default; }
+
+.sep { border: none; border-top: 1px solid var(--border); margin: 2px 0; }
+
+.ghost {
+    flex: 1;
+    padding: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+}
+.ghost:hover { border-color: var(--accent); }
+
+.logo-name {
+    font-size: 10px;
+    color: var(--muted);
+    word-break: break-all;
+}

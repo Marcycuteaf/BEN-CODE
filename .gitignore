@@ -1,5 +1,14 @@
 .DS_Store
 *.log
-*.zxp
 bencode_payload.json
 node_modules/
+
+# 工具與輸出 (不進版控)
+tools/
+dist/
+*.p12
+
+# 同目錄其他本地專案 (不屬於 BEN-CODE)
+marcy-cep/
+pngseq-cep/
+whv_pdf.py

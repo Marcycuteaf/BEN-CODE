@@ -71,6 +71,41 @@
                 <input type="checkbox" id="qr-drawbg" checked />
                 <span>產生背景圖層</span>
             </label>
+
+            <hr class="sep" />
+
+            <label class="check">
+                <input type="checkbox" id="qr-styleeyes" />
+                <span>定位點獨立樣式 (3 個眼睛)</span>
+            </label>
+            <div class="row" id="qr-eye-row">
+                <label class="field color">
+                    <span>定位點顏色</span>
+                    <input type="color" id="qr-eyecolor" value="#000000" />
+                </label>
+                <label class="field">
+                    <span>定位點圓角 <em id="qr-eyeradius-val">0%</em></span>
+                    <input type="range" id="qr-eyeradius" min="0" max="100" value="0" />
+                </label>
+            </div>
+
+            <hr class="sep" />
+
+            <label class="check">
+                <input type="checkbox" id="qr-reservelogo" />
+                <span>中央預留區 (放 Logo)</span>
+            </label>
+            <div class="row" id="qr-logo-row">
+                <label class="field">
+                    <span>預留大小 <em id="qr-logopct-val">20%</em></span>
+                    <input type="range" id="qr-logopct" min="10" max="35" value="20" />
+                </label>
+            </div>
+            <div class="row">
+                <button type="button" id="qr-logo-pick" class="ghost">選擇 Logo 圖檔…</button>
+                <button type="button" id="qr-logo-clear" class="ghost">清除</button>
+            </div>
+            <div class="logo-name" id="qr-logo-name">（未選擇，產生時於中央留白供手動放置）</div>
         </section>
 
         <!-- 條碼面板 -->
@@ -85,6 +120,8 @@
                 <select id="bc-type">
                     <option value="code128" selected>Code 128 (數字+英文，通用)</option>
                     <option value="code39">Code 39 (英數，長度彈性)</option>
+                    <option value="ean13">EAN-13 (12/13 碼數字)</option>
+                    <option value="upca">UPC-A (11/12 碼數字)</option>
                 </select>
             </label>
 
@@ -152,6 +189,7 @@
     <script src="./js/lib/CSInterface.js"></script>
     <script src="./js/lib/qrcode.js"></script>
     <script src="./js/lib/barcode.js"></script>
+    <script src="./js/geometry.js"></script>
     <script src="./js/main.js"></script>
 </body>
 </html>

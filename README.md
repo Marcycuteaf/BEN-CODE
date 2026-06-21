@@ -3,7 +3,10 @@
 在 After Effects 內，用直覺的面板產生**向量** QR Code 與條碼（真正的 Shape Layer，可無損縮放）。
 
 - **QR Code**：內容/網址、容錯等級、模組大小、邊距、**圓角**、前景/背景色、背景圖層。
-- **條碼 Barcode**：Code 128 / Code 39、**長度依資料自動調整**、條寬、高度、寬窄比、顏色、背景。
+  - **定位點獨立樣式**：3 個「眼睛」可獨立設定顏色與圓角，外環以 Merge Paths 鏤空（真透明）。
+  - **中央預留區 + Logo**：自動於中央留白，並可選擇圖檔由 ExtendScript 匯入、置中縮放。
+- **條碼 Barcode**：Code 128 / Code 39 / **EAN-13** / **UPC-A**、**長度依資料自動調整**、條寬、高度、寬窄比、顏色、背景。
+  - EAN-13 / UPC-A 會自動計算並補上**校驗碼**。
 - **Transform**：等比縮放（縮放 %）與**目標寬度**動態尺寸（自動換算等比縮放）。
 - 產生結果為原生 **Shape Layer**（向量），可在 AE 內任意縮放、改色、加效果。
 
@@ -133,4 +136,14 @@ http://localhost:8088
 
 ## 七、（選用）打包成 ZXP 發佈
 
-開發完成若要給別人安裝，可用 Adobe 的 [ZXPSignCmd](https://github.com/Adobe-CEP/CEP-Resources) 自簽章打包成 `.zxp`，再用 [ZXP/UXP Installer](https://aescripts.com/learn/zxp-installer/) 安裝；如此就不需要開 PlayerDebugMode。
+已附上打包腳本 `package-mac.sh`（使用 Adobe 官方 `ZXPSignCmd`）：
+
+```bash
+cd ~/Downloads/BEN-CODE
+./package-mac.sh          # 產出 dist/BEN-CODE.zxp（自簽章）
+```
+
+把 `dist/BEN-CODE.zxp` 交給使用者，用 [ZXP/UXP Installer](https://aescripts.com/learn/zxp-installer/)（或 `anastasiy's ZXPInstaller`）安裝即可，**不需開 PlayerDebugMode**。
+
+> 註：`tools/`（簽章工具與憑證）、`dist/`（輸出）已列入 `.gitignore`，不進版控。
+> 自簽章的 `.zxp` 安裝時可能出現「未受信任憑證」提示，屬正常；要正式發佈需向 CA 申請程式碼簽章憑證。

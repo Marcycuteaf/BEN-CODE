@@ -110,13 +110,73 @@
     return { bits: bits, text: dataRaw };
   }
 
+  // ---- EAN-13 / UPC-A ----
+  // L / G / R 7-module 圖樣 ('1' = 黑條)
+  var EAN_L = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+  var EAN_G = ['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
+  var EAN_R = ['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
+  // 首位數決定左側 6 碼的奇偶 (L=偶校驗碼 / G=奇校驗碼) 排列
+  var EAN_PARITY = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+
+  function eanCheckDigit(digits12) {
+    var sum = 0;
+    for (var i = 0; i < 12; i++) {
+      var d = digits12.charCodeAt(i) - 48;
+      sum += (i % 2 === 0) ? d : d * 3; // 由左起權重 1,3,1,3...
+    }
+    return (10 - (sum % 10)) % 10;
+  }
+
+  function ean13(dataRaw) {
+    var s = String(dataRaw).replace(/\s+/g, '');
+    if (!/^\d+$/.test(s)) throw new Error('EAN-13 僅接受數字');
+    if (s.length === 12) {
+      s = s + eanCheckDigit(s); // 自動補校驗碼
+    } else if (s.length === 13) {
+      if (eanCheckDigit(s.substr(0, 12)) !== (s.charCodeAt(12) - 48)) {
+        throw new Error('EAN-13 校驗碼錯誤 (第 13 碼應為 ' + eanCheckDigit(s.substr(0, 12)) + ')');
+      }
+    } else {
+      throw new Error('EAN-13 需 12 碼 (自動補碼) 或 13 碼');
+    }
+
+    var first = s.charCodeAt(0) - 48;
+    var parity = EAN_PARITY[first];
+    var bits = '101'; // 起始護線
+    for (var i = 1; i <= 6; i++) {
+      var d = s.charCodeAt(i) - 48;
+      bits += (parity.charAt(i - 1) === 'L') ? EAN_L[d] : EAN_G[d];
+    }
+    bits += '01010'; // 中央護線
+    for (var j = 7; j <= 12; j++) {
+      bits += EAN_R[s.charCodeAt(j) - 48];
+    }
+    bits += '101'; // 結束護線
+    return { bits: bits, text: s };
+  }
+
+  function upcA(dataRaw) {
+    var s = String(dataRaw).replace(/\s+/g, '');
+    if (!/^\d+$/.test(s)) throw new Error('UPC-A 僅接受數字');
+    // UPC-A = EAN-13 前面補 0；接受 11 碼(補校驗碼) 或 12 碼
+    if (s.length === 11 || s.length === 12) {
+      var r = ean13('0' + s);
+      return { bits: r.bits, text: r.text.substr(1) }; // 顯示時去掉前導 0
+    }
+    throw new Error('UPC-A 需 11 碼 (自動補碼) 或 12 碼');
+  }
+
   global.BenBarcode = {
     encode: function (type, data, opts) {
       opts = opts || {};
       if (type === 'code39') return code39(data, opts.wideRatio);
+      if (type === 'ean13') return ean13(data);
+      if (type === 'upca') return upcA(data);
       return code128(data); // 預設 Code 128
     },
     code128: code128,
-    code39: code39
+    code39: code39,
+    ean13: ean13,
+    upca: upcA
   };
 })(typeof window !== 'undefined' ? window : this);
