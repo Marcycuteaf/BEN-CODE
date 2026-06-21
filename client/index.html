@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BEN CODE</title>
+    <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+    <div class="app">
+        <header class="topbar">
+            <div class="brand">BEN<span>CODE</span></div>
+            <div class="subtitle">QR Code &amp; 條碼向量產生器</div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="qr">QR Code</button>
+            <button class="tab" data-tab="barcode">條碼 Barcode</button>
+        </nav>
+
+        <!-- 預覽 -->
+        <section class="preview-wrap">
+            <canvas id="preview" width="240" height="240"></canvas>
+        </section>
+
+        <!-- QR Code 面板 -->
+        <section class="panel" id="panel-qr">
+            <label class="field">
+                <span>內容 (文字 / 網址)</span>
+                <textarea id="qr-text" rows="2" placeholder="https://example.com">https://example.com</textarea>
+            </label>
+
+            <label class="field">
+                <span>容錯等級</span>
+                <select id="qr-ec">
+                    <option value="L">L — 7%</option>
+                    <option value="M" selected>M — 15%</option>
+                    <option value="Q">Q — 25%</option>
+                    <option value="H">H — 30%</option>
+                </select>
+            </label>
+
+            <div class="row">
+                <label class="field">
+                    <span>模組大小 (px)</span>
+                    <input type="number" id="qr-module" value="20" min="1" max="200" />
+                </label>
+                <label class="field">
+                    <span>邊距 (模組)</span>
+                    <input type="number" id="qr-margin" value="4" min="0" max="20" />
+                </label>
+            </div>
+
+            <label class="field">
+                <span>圓角 <em id="qr-radius-val">0%</em></span>
+                <input type="range" id="qr-radius" min="0" max="50" value="0" />
+            </label>
+
+            <div class="row">
+                <label class="field color">
+                    <span>前景色</span>
+                    <input type="color" id="qr-fg" value="#000000" />
+                </label>
+                <label class="field color">
+                    <span>背景色</span>
+                    <input type="color" id="qr-bg" value="#ffffff" />
+                </label>
+            </div>
+
+            <label class="check">
+                <input type="checkbox" id="qr-drawbg" checked />
+                <span>產生背景圖層</span>
+            </label>
+        </section>
+
+        <!-- 條碼面板 -->
+        <section class="panel hidden" id="panel-barcode">
+            <label class="field">
+                <span>資料</span>
+                <input type="text" id="bc-text" value="BENCODE-2026" placeholder="輸入文字或數字" />
+            </label>
+
+            <label class="field">
+                <span>條碼類型</span>
+                <select id="bc-type">
+                    <option value="code128" selected>Code 128 (數字+英文，通用)</option>
+                    <option value="code39">Code 39 (英數，長度彈性)</option>
+                </select>
+            </label>
+
+            <div class="row">
+                <label class="field">
+                    <span>條寬 (px / 模組)</span>
+                    <input type="number" id="bc-bar" value="4" min="1" max="40" />
+                </label>
+                <label class="field">
+                    <span>高度 (px)</span>
+                    <input type="number" id="bc-height" value="120" min="10" max="2000" />
+                </label>
+            </div>
+
+            <div class="row" id="bc-ratio-row">
+                <label class="field">
+                    <span>寬窄比 (Code 39)</span>
+                    <input type="number" id="bc-ratio" value="3" min="2" max="5" step="1" />
+                </label>
+                <label class="field">
+                    <span>邊距 (模組)</span>
+                    <input type="number" id="bc-margin" value="10" min="0" max="40" />
+                </label>
+            </div>
+
+            <div class="row">
+                <label class="field color">
+                    <span>前景色</span>
+                    <input type="color" id="bc-fg" value="#000000" />
+                </label>
+                <label class="field color">
+                    <span>背景色</span>
+                    <input type="color" id="bc-bg" value="#ffffff" />
+                </label>
+            </div>
+
+            <label class="check">
+                <input type="checkbox" id="bc-drawbg" checked />
+                <span>產生背景圖層</span>
+            </label>
+        </section>
+
+        <!-- 共用：Transform 控制 -->
+        <section class="panel transform">
+            <h3>Transform 控制</h3>
+            <div class="row">
+                <label class="field">
+                    <span>縮放 (%)</span>
+                    <input type="number" id="tf-scale" value="100" min="1" max="2000" />
+                </label>
+                <label class="field">
+                    <span>目標寬度 (px，0=略過)</span>
+                    <input type="number" id="tf-width" value="0" min="0" max="10000" />
+                </label>
+            </div>
+            <p class="hint">填入「目標寬度」時會優先用它做等比縮放，自動覆蓋縮放 %。</p>
+        </section>
+
+        <footer class="actions">
+            <div id="status" class="status">準備就緒</div>
+            <button id="generate" class="primary">在 After Effects 中產生</button>
+        </footer>
+    </div>
+
+    <script src="./js/lib/CSInterface.js"></script>
+    <script src="./js/lib/qrcode.js"></script>
+    <script src="./js/lib/barcode.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>

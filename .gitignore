@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+*.zxp
+bencode_payload.json
+node_modules/
